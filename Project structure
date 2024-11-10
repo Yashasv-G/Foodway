@@ -1,0 +1,8 @@
+src/main/java/
+    com.example.webapp/
+        LoginServlet.java
+        RegisterServlet.java
+src/main/webapp/
+    WEB-INF/
+        web.xml
+    index.jsp

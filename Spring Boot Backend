@@ -1,0 +1,207 @@
+pom.xml Dependencies
+xml
+Copy code
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+    </dependency>
+</dependencies>
+Application Entry Point
+java
+Copy code
+package com.example.instagramclone;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class InstagramCloneApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(InstagramCloneApplication.class, args);
+    }
+}
+Model
+java
+Copy code
+package com.example.instagramclone.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Data
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String caption;
+
+    @Lob
+    private byte[] image;
+}
+Repository
+java
+Copy code
+package com.example.instagramclone.repository;
+
+import com.example.instagramclone.model.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+}
+Controller
+java
+Copy code
+package com.example.instagramclone.controller;
+
+import com.example.instagramclone.model.Post;
+import com.example.instagramclone.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+@Controller
+@RequestMapping("/")
+public class PostController {
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @GetMapping
+    public String homePage(Model model) {
+        model.addAttribute("posts", postRepository.findAll());
+        return "home";
+    }
+
+    @PostMapping("/upload")
+    public String uploadPost(@RequestParam("image") MultipartFile image, @RequestParam("caption") String caption) throws IOException {
+        Post post = new Post();
+        post.setCaption(caption);
+        post.setImage(image.getBytes());
+        postRepository.save(post);
+        return "redirect:/";
+    }
+}
+application.properties
+properties
+Copy code
+spring.h2.console.enabled=true
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+HTML & Thymeleaf (Frontend)
+home.html
+html
+Copy code
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Instagram Clone</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Instagram Clone</h1>
+
+        <!-- Upload Form -->
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" required>
+            <input type="text" name="caption" placeholder="Enter a caption" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <!-- Posts -->
+        <div class="posts">
+            <div th:each="post : ${posts}" class="post">
+                <img th:src="'data:image/png;base64,' + ${T(org.apache.tomcat.util.codec.binary.Base64).encodeBase64String(post.image)}" alt="Post image">
+                <p th:text="${post.caption}"></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+CSS
+styles.css
+css
+Copy code
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fafafa;
+    color: #262626;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+}
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.post img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+JavaScript (Optional for Comments)
+If you want to add comments functionality, create a separate /comments endpoint and use AJAX with the following basic script:
+
+scripts.js
+javascript
+Copy code
+document.addEventListener('DOMContentLoaded', () => {
+    const commentButtons = document.querySelectorAll('.comment-button');
+    commentButtons.forEach(button => {
+        button.addEventListener('click', event => {
+            const postId = event.target.dataset.postId;
+            const comment = prompt('Enter your comment:');
+            if (comment) {
+                fetch(/posts/${postId}/comments, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comment })
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Comment added!');
+                    }
+                });
+            }
+        });
+    });
+});

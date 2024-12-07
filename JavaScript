@@ -1,0 +1,92 @@
+// User and posts data simulation
+const users = {}; // Empty object to store user registrations
+let loggedInUser = null;
+const posts = [];
+
+// Utility functions
+function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(page => page.classList.add("hidden"));
+    document.getElementById(pageId).classList.remove("hidden");
+}
+
+function displayPosts() {
+    const postsContainer = document.getElementById("posts");
+    postsContainer.innerHTML = posts
+        .map(post => <div class="post"><img src="${post.image}" alt="Post"><p>${post.caption}</p></div>)
+        .join("");
+}
+
+// Switch between Login and Register pages
+document.querySelectorAll("#switch-auth").forEach(switchAuth => {
+    switchAuth.addEventListener("click", function () {
+        if (document.getElementById("login-page").classList.contains("hidden")) {
+            showPage("login-page");
+        } else {
+            showPage("register-page");
+        }
+    });
+});
+
+// Register functionality
+document.getElementById("register-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("register-username").value;
+    const password = document.getElementById("register-password").value;
+
+    if (users[username]) {
+        document.getElementById("register-error").textContent = "Username already exists.";
+        document.getElementById("register-success").textContent = "";
+    } else {
+        users[username] = password;
+        document.getElementById("register-error").textContent = "";
+        document.getElementById("register-success").textContent = "Registration successful! You can now log in.";
+        document.getElementById("register-username").value = "";
+        document.getElementById("register-password").value = "";
+    }
+});
+
+// Login functionality
+document.getElementById("login-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
+
+    if (users[username] && users[username] === password) {
+        loggedInUser = username;
+        document.getElementById("login-error").textContent = "";
+        showPage("upload-page");
+    } else {
+        document.getElementById("login-error").textContent = "Incorrect username or password.";
+    }
+});
+
+// Upload functionality
+document.getElementById("upload-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const imageInput = document.getElementById("image");
+    const caption = document.getElementById("caption").value;
+
+    if (imageInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            posts.push({ image: e.target.result, caption });
+            displayPosts();
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    }
+
+    imageInput.value = "";
+    document.getElementById("caption").value = "";
+});
+
+// Navigation to Profile Page
+document.getElementById("go-to-profile").addEventListener("click", function () {
+    document.getElementById("welcome-message").textContent = Hello, ${loggedInUser};
+    showPage("profile-page");
+});
+
+// Logout functionality
+document.getElementById("logout").addEventListener("click", function () {
+    loggedInUser = null;
+    showPage("login-page");
+});

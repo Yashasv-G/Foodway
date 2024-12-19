@@ -1,0 +1,14 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+
+# IntelliJ IDEA
+.idea/
+
+# Eclipse
+.project
+.classpath
+.settings/

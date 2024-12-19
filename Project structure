@@ -1,8 +1,15 @@
-src/main/java/
-    com.example.webapp/
-        LoginServlet.java
-        RegisterServlet.java
-src/main/webapp/
-    WEB-INF/
-        web.xml
-    index.jsp
+Foodway/
+│
+├── .gitignore              # Git ignore file (e.g., for build files, IDE-specific files)
+├── README.md               # Project overview and instructions
+├── pom.xml                 # Maven configuration file (if using Maven)
+├── src/                    # Source code
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── foodway/
+│   │   │           ├── controller/       # Contains servlets or controllers (e.g., LoginServlet)
+│   │   │           ├── model/            # Java classes representing data (e.g., User, Recipe)
+│   │   ├── resources/
+│   │   │   ├── static/                    # Static files (CSS, JS, images)
+│   │   │   ├── templates/                 # Thymeleaf templates (HTML files)

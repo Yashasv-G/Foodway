@@ -8,8 +8,29 @@ Foodway/
 │   │   ├── java/
 │   │   │   └── com/
 │   │   │       └── foodway/
-│   │   │           ├── controller/       # Contains servlets or controllers (e.g., LoginServlet)
-│   │   │           ├── model/            # Java classes representing data (e.g., User, Recipe)
+│   │   │           ├── FoodwayApplication.java  # Main application entry point
+│   │   │           ├── controller/              # Controllers for managing HTTP requests
+│   │   │           │   ├── RecipeController.java # REST controller for recipes
+│   │   │           │   └── UserController.java   # REST controller for user authentication
+│   │   │           ├── model/                   # Java classes representing data
+│   │   │           │   ├── Recipe.java          # Recipe entity
+│   │   │           │   ├── User.java            # User entity
+│   │   │           │   └── Comment.java         # Comment entity
+│   │   │           ├── repository/              # Interfaces for database interaction
+│   │   │           │   ├── RecipeRepository.java # JPA repository for recipes
+│   │   │           │   └── UserRepository.java   # JPA repository for users
+│   │   │           ├── service/                 # Business logic services
+│   │   │           │   ├── RecipeService.java    # Service for recipes
+│   │   │           │   └── UserService.java      # Service for users
 │   │   ├── resources/
-│   │   │   ├── static/                    # Static files (CSS, JS, images)
-│   │   │   ├── templates/                 # Thymeleaf templates (HTML files)
+│   │   │   ├── static/                          # Static files (CSS, JS, images)
+│   │   │   ├── templates/                       # Thymeleaf templates (HTML files)
+│   │   │   │   ├── recipe.html                  # Template for displaying recipes
+│   │   │   │   └── login.html                   # Template for user login
+│   │   │   └── application.properties           # Application configuration file
+│   ├── test/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── foodway/
+│   │   │           ├── RecipeServiceTest.java   # JUnit test for RecipeService
+│   │   │           └── UserServiceTest.java     # JUnit test for UserService

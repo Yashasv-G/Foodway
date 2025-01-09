@@ -38,4 +38,18 @@ public class RecipeServiceTest {
         assertEquals("Pasta", createdRecipe.getName());
         verify(recipeRepository, times(1)).save(recipe);
     }
+
+    @Test
+    public void testGetRecipeById() {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        recipe.setName("Pasta");
+
+        when(recipeRepository.findById(1L)).thenReturn(java.util.Optional.of(recipe));
+
+        Recipe foundRecipe = recipeService.getRecipeById(1L);
+
+        assertNotNull(foundRecipe);
+        assertEquals("Pasta", foundRecipe.getName());
+    }
 }
